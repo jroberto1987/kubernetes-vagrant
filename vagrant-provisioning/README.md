@@ -1,9 +1,9 @@
 **Procedimento realizado baseado no projeto https://github.com/justmeandopensource/kubernetes**
 
-Instalando o vagrant do repositorio no ubuntu 22.04 
+Instalando o vagrant do repositorio no ubuntu 22.04 <br>
 `apt-get install vagrant`
 
-Instalado o kubectl no host para acesso ao cluster
+Instalado o kubectl no host para acesso ao cluster <br>
 `sudo apt-get install -y ca-certificates curl`
 
 `sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg`
@@ -20,7 +20,7 @@ Adicionando a chave de acesso ao cluster <br>
 `kubectl cluster-info`
 `kubectl get nodes`
 
-**Comandos administrção vagrant**
+**Comandos administrção vagrant** <br>
 vagrant up <br>
 vagrant status <br>
 vagrant destroy -f <br>
