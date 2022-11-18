@@ -1,4 +1,4 @@
-**Procedimento realizado baseado no projeto https://github.com/justmeandopensource/kubernetes**
+**Procedimento realizado baseado no projeto https://github.com/justmeandopensource/kubernetes https://www.youtube.com/watch?v=2aJSAzLW6fg**
 
 Instalando o vagrant do repositorio no ubuntu 22.04 <br>
 `apt-get install vagrant`
