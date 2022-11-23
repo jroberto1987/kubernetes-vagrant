@@ -1,8 +1,0 @@
-kubectl run app --image=nginx --port=80
-kubectl get pod -o wide
-kubectl get pod app -o yaml
-kubectl get namespace
-kubectl get pod -n kube-system = Verificando os pods do namespace kube-system
-kubectl describe pod app
-kubectl logs app = Mostra os logs da aplicação app
-kubectl get all
