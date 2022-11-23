@@ -1,0 +1,27 @@
+Node master:
+Atulizado o kubernetes da versão v1.23.0 para v1.24.8, seguindo a documentação do kubernetes
+
+Upgrade kubeadm:
+apt-mark unhold kubeadm && apt-get update && apt-get install -y kubeadm=1.24.8-00 && apt-mark hold kubeadm
+
+kubeadm version
+kubeadm upgrade plan
+kubeadm upgrade apply v1.24.8
+
+Upgrade do kubelet e kubectl:
+kubectl drain kmaster --ignore-daemonsets
+apt-mark unhold kubelet kubectl && apt-get update && apt-get install -y kubelet=1.24.8-00 kubectl=1.24.8-00 && apt-mark hold kubelet kubectl
+systemctl daemon-reload
+systemctl restart kubelet
+kubectl uncordon kmaster
+
+Node Worker1:
+Upgrade kubeadm:
+apt-mark unhold kubeadm && apt-get update && apt-get install -y kubeadm=1.24.8-00 && apt-mark hold kubeadm
+kubeadm upgrade node
+kubectl drain kmaster --ignore-daemonsets
+apt-mark unhold kubelet && apt-get update && apt-get install -y kubelet=1.24.8-00 && apt-mark hold kubelet
+systemctl daemon-reload
+kubectl uncordon kmaster
+
+Repita o passo do worker1 no worker2
