@@ -1,0 +1,30 @@
+apt list -a kubeadm
+
+Node master:
+Atulizado o kubernetes da versão v1.24.8 para v1.25.4, seguindo a documentação do kubernetes
+vagrant ssh kmaster
+Upgrade kubeadm:
+apt-mark unhold kubeadm && apt-get update && apt-get install -y kubeadm=1.25.4-00 && apt-mark hold kubeadm
+
+kubeadm version
+kubeadm upgrade plan
+kubeadm upgrade apply v1.25.4
+
+Upgrade do kubelet e kubectl:
+kubectl drain kmaster --ignore-daemonsets
+apt-mark unhold kubelet kubectl && apt-get update && apt-get install -y kubelet=1.25.4-00 kubectl=1.25.4-00 && apt-mark hold kubelet kubectl
+systemctl daemon-reload
+systemctl restart kubelet
+kubectl uncordon kmaster
+
+Node Worker1:
+vagrant ssh kworker1
+Upgrade kubeadm:
+apt-mark unhold kubeadm && apt-get update && apt-get install -y kubeadm=1.25.4-00 && apt-mark hold kubeadm
+kubeadm upgrade node
+kubectl drain  kworker1 --ignore-daemonsets
+apt-mark unhold kubelet && apt-get update && apt-get install -y kubelet=1.25.4-00 && apt-mark hold kubelet
+systemctl daemon-reload
+kubectl uncordon  kworker1
+
+Repita o passo do worker1 no worker2

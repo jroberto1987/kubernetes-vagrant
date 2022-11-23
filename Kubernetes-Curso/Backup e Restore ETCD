@@ -1,0 +1,18 @@
+Realizando o Backup e Restore do ETCD
+https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/
+
+apt  install etcd-client
+
+Comando para realizar o BACKUP do ETCD
+ETCDCTL_API=3 etcdctl --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key snapshot save /home/backup-etcd.db
+
+Comando para visualizar o caminho das chaves e certificados a ser usado no comando acima para realização do backup
+kubectl describe pod -n kube-system | less
+
+Restaurando o ETCD
+ETCDCTL_API=3 etcdctl snapshot restore backup-etcd.db --data-dir /var/lib/etcd-backup
+
+OBS: Para o kubernetes utiliza-se do backup restaurado e necessario alterar no arquivo /etc/kubernetes/manifests/etcd.yaml o caminho para o novo diretorio criado.
+
+
+
