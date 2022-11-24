@@ -1,7 +1,20 @@
-**Procedimento realizado baseado no projeto https://github.com/justmeandopensource/kubernetes https://www.youtube.com/watch?v=2aJSAzLW6fg**
+**Procedimento para subir o ambiente de um cluster kurbenetes via vagrant, baseado no projeto https://github.com/justmeandopensource/kubernetes https://www.youtube.com/watch?v=2aJSAzLW6fg**
 
 Instalando o vagrant do repositorio no ubuntu 22.04 <br>
 `apt-get install vagrant`
+`apt-get install git`
+
+Baixar o repositorio com os arquivos do vagrant para subir o ambiente <br>
+`git clone https://github.com/jroberto1987/kubernetes-vagrant.git`
+
+Subindo o ambiente no vagrant <br>
+`vim cat /etc/vbox/networks.conf`
+* 0.0.0.0/0 ::/0
+
+`cd /home/jroberto/kubernetes-vagrant/vagrant-provisioning`
+`vagrant up`
+
+
 
 Instalado o kubectl no host para acesso ao cluster <br>
 `sudo apt-get install -y ca-certificates curl`
