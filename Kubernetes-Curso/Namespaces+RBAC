@@ -1,0 +1,11 @@
+Namespaces:
+No Kubernetes, os namespaces fornecem um mecanismo para isolar grupos de recursos em um único cluster. 
+Os nomes dos recursos precisam ser exclusivos dentro de um namespace, mas não entre namespaces.
+O escopo baseado em namespace é aplicável apenas para objetos com namespace (por exemplo, implantações, 
+serviços etc.) e não para objetos de todo o cluster (por exemplo, StorageClass, nós, PersistentVolumes etc.).
+
+RBAC Authorization:
+O controle de acesso baseado em função (RBAC) é um método de regular o acesso a recursos de computador 
+ou rede com base nas funções de usuários individuais em sua organização. A autorização RBAC usa o grupo
+de API rbac.authorization.k8s.io para conduzir decisões de autorização, permitindo que você configure 
+políticas dinamicamente por meio da API Kubernetes.
