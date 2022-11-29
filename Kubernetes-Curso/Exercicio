@@ -1,0 +1,22 @@
+- Faça a criação de um namespace e crie um POD no mesmo
+- Crie uma POD no namespace Default.
+- Acesse a POD do namespace Default e veja se a mesma se comunica com a POD do namespace criado previamente. 
+(você pode realizar um teste com o comando PING ou CURL).
+
+Faça a criação de um namespace e crie um POD no mesmo
+kubectl create namespace testecurso
+kubectl run nginx --image=nginx --port=80 -n testecurso
+
+Crie uma POD no namespace Default
+kubectl run nginx2 --image=nginx --port=80
+
+Acesse a POD do namespace Default e veja se a mesma se comunica com a POD do namespace criado previamente. 
+(você pode realizar um teste com o comando PING ou CURL).
+kubectl exec --stdin --tty nginx2 -- /bin/bash
+
+Acessou a página web normalmente
+
+
+
+
+
