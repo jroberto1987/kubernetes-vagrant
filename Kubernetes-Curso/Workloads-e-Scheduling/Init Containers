@@ -1,0 +1,36 @@
+Init Containers
+This page provides an overview of init containers: specialized containers that run before app containers in a Pod. 
+Init containers can contain utilities or setup scripts not present in an app image.
+
+Subindo os pods 
+kubectl create -f pod-initContainer.yml
+kubectl describe pod pod-init
+
+Acessando o container
+kubectl exec -it pod-init -- /bin/sh
+
+Listando o recurso que mostra as abreviaçoes dos comandos
+kubectl api-resources
+
+Nesse exemplo ele sobe dois containners init-1 e init-2, após a conclusão das tarefas dos containers anteriores e executado o container main-app
+
+vim pod-initContainer.yml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-init
+spec:
+  initContainers:
+  - name: init-1
+    image: busybox
+    command: ["echo","I am init-container"]
+  - name: init-2
+    image: busybox
+    command: ["sleep","30"]
+
+  containers:
+  - name: main-app
+    image: busybox
+    command: ["sleep","1d"]
+  restartPolicy: Never

@@ -1,0 +1,32 @@
+
+MultiContainer
+Comunicação entre contêineres no mesmo pod, no arquivo abaixo criamos dois containers no mesmo pod.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-containers
+spec:
+
+  restartPolicy: Never
+
+  containers:
+
+  - name: nginx-container
+    image: nginx
+
+  - name: busybox-container
+    image: busybox
+    command: ["sleep","1d"]
+
+
+kubectl create -f multi-container.yml 
+
+Acessou o container default chamado nginx-container
+kubectl exec -it multi-containers -- /bin/bash
+
+Passando o parametro -c conseguimos informar o container a ser acessado, nesse caso é o busybox-container
+kubectl exec -it multi-containers -c busybox-container -- /bin/sh
+
+Deletando os containers criados
+kubectl delete -f multi-container.yml
+
