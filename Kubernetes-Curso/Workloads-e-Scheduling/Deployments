@@ -1,0 +1,23 @@
+Deployments:
+Um deployments fornece atualizações declarativas para pods e ReplicaSets. 
+Você descreve um estado desejado em uma implantação e o controlador de 
+implantação altera o estado real para o estado desejado em uma taxa controlada. 
+Você pode definir Deployments para criar novos ReplicaSets ou remover Deployments
+existentes e adotar todos os seus recursos com novos Deployments.
+
+ReplicaSet:
+A finalidade de um ReplicaSet é manter um conjunto estável de réplicas de pods 
+em execução a qualquer momento. Como tal, é frequentemente usado para garantir
+a disponibilidade de um número especificado de Pods idênticos.
+
+Criando um deploy com 3 containers:
+kubectl create deploy app --image=nginx --port=80 --replicas=3
+
+Escalando a quantidade de containner de duas formas:
+1- Editando o arquivo  kubectl edit deploy app
+2- kubectl scale deploy app --replicas=10
+
+Deletando um deploy:
+kubectl delete deploy app-deploy
+
+
