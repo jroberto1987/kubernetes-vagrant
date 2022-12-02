@@ -1,0 +1,18 @@
+Rollout: Mantém uma certa quantidade de revisão do deployment
+
+kubectl create deploy app-deploy --image=nginx --port=80 --replicas=3
+kubectl describe deploy app-deploy
+
+Atualizando a versão de uma imagem no deployment, nesse exemplo iremos atualizar a versão da image nginx 
+1- Verificar o nome do container: kubectl describe deploy app-deploy
+2- Mudando a versão da imagem: kubectl set image deploy app-deploy nginx=nginx:1.14.2 --record
+3- Visualizando a mudança: kubectl describe deploy app-deploy
+4- Visualizando a mudança diretamente em um pod: kubectl describe pod app-deploy-bfbcbd6fc-924
+
+
+Rollout, mantém uma certa quantidade de revisão do deployment
+
+Visulizando as revisões de um deploy: kubectl rollout history deploy app-deploy 
+Visulizando a revisão de um deploy especifico: kubectl rollout history deploy app-deploy --revision=1
+Voltando um deploy para revisão 1: kubectl rollout undo deploy app-deploy --to-revision=1
+Verificanco o status do deployment: kubectl rollout status deploy app-deploy
