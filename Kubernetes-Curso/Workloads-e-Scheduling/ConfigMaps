@@ -1,0 +1,63 @@
+ConfigMaps
+
+A ConfigMap is an API object used to store non-confidential data in key-value pairs.
+Pods can consume ConfigMaps as environment variables, command-line arguments, 
+or as configuration files in a volume.
+
+A ConfigMap allows you to decouple environment-specific configuration from your container
+images, so that your applications are easily portable.
+
+Caution: ConfigMap does not provide secrecy or encryption. If the data you want to store 
+are confidential, use a Secret rather than a ConfigMap, or use additional (third party) 
+tools to keep your data private.
+
+Criando um arquivo yaml de um deploy com o --dry-run
+kubectl create deploy app-deploy --image=nginx --replicas=3 --dry-run=client -o yaml > deploy-config-maps.yaml
+
+Criando ConfiMap,variable e um deploy
+- kubectl create configmap variable-config --from-literal=variable=TESTE12345
+- Passando os valores da variavel no arquivo de deploy abaixo:
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: app-deploy
+  name: app-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-deploy
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: app-deploy
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+        env:
+        - name: CONFIGMAP_VARIABLE
+          valueFrom:
+            configMapKeyRef:
+              name: variable-config
+              key: variable
+status: {}
+
+Criando o deploy acima:
+kubectl create -f deploy-config-maps.yaml 
+
+kubectl describe deploy app-deploy
+
+Visualiando o valor da variavel dentro dos containers:
+kubectl exec -it app-deploy-6bc67c5457-fcmdn -- env
+
+Visualizando os arquivos ConfiMaps:
+kubectl get configmap
+
+
+
