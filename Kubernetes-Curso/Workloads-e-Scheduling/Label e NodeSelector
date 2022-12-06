@@ -1,0 +1,50 @@
+Label:
+Os Labels são pares de chave/valor anexados a objetos, como pods.
+Os Labels devem ser usados para especificar atributos de identificação
+de objetos que são significativos e relevantes para os usuários, mas 
+não implicam diretamente na semântica do sistema central. Os Labels 
+podem ser usados para organizar e selecionar subconjuntos de objetos. 
+Os Labels podem ser anexados aos objetos no momento da criação e 
+posteriormente adicionados e modificados a qualquer momento. 
+Cada objeto pode ter um conjunto de Labels de chave/valor definidos. 
+Cada chave deve ser exclusiva para um determinado objeto.
+
+NodeSelector:
+nodeSelector é a forma recomendada mais simples de restrição de seleção de nó. 
+Você pode adicionar o campo nodeSelector à sua especificação de pod e 
+especificar os Labels de nó que deseja que o nó de destino tenha. 
+O Kubernetes apenas programa o pod em nós que possuem cada um dos Labels que você especificar.
+
+
+Listando as Labels de um node:
+kubectl label node kworker1 --list
+
+Adicionando uma label a um NODE com o nome SSD:
+kubectl label node kworker1 disk=SSD
+
+Adiciona uma label ao deploy app-deploy:
+kubectl label deploy app-deploy env=dev
+
+Utilizando um label com o NodeSelector, no arquivo abaixo estamos criando um POD e vinculando ele ao node que tem a LABEL SSD:
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    env: test
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
+  nodeSelector:
+    disk: SSD
+
+Reescrevendo uma label nesse exemplo, foi mudado a label SSD para HDD, o pod que está rodando com a label anterior não é afetato,
+porém ao subir novamente o POD com o arquivo acima ele ficará em status "Pending", devido o node kworker1 ter mudando a label para HDD,
+para resolver o problema altere o arquivo no campo "nodeSelector", para disk: HDD.
+kubectl label node kworker1 disk=HDD --overwrite
+
+Deletando uma label do node:
+kubectl label node kworker1 disk-
+
