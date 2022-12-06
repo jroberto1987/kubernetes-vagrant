@@ -1,0 +1,37 @@
+Taints and Tolerations:
+
+Node affinity é uma propriedade dos pods que os atrai para um conjunto de nós (seja como uma preferência ou um requisito rígido). Taints são o oposto - eles permitem que um nó repela um conjunto de pods. As tolerâncias são aplicadas aos pods. As tolerâncias permitem que o agendador agende pods com taints correspondentes. As tolerâncias permitem o escalonamento, mas não garantem o escalonamento: o escalonador também avalia outros parâmetros como parte de sua função. Taints e tolerâncias trabalham juntos para garantir que os pods não sejam programados em nós inadequados. Um ou mais taints são aplicados a um nó; isso marca que o nó não deve aceitar nenhum pod que não tolere as taints.
+
+Cria um arquivo de POD:
+kubectl run app-taint --image=nginx --dry-run=client -o yaml > pod-taint.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: app-taint
+  name: app-taint
+spec:
+  containers:
+  - image: nginx
+    name: app-taint
+    resources: {}
+  tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    effect: NoSchedule    
+  nodeSelector: 
+    kubernetes.io/hostname: kmaster   
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+
+Com os parametros de tolerations e nodeSelector no arquivo acima, foi possivel executar o POD no node master, o valor de key foi pego com o comando Describe no node master.
+ tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    effect: NoSchedule  
+
+
+nodeSelector: 
+    kubernetes.io/hostname: kmaster   
