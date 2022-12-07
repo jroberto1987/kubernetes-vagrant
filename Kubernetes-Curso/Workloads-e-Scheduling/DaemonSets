@@ -1,0 +1,50 @@
+Daemonset:
+Um DaemonSet garante que todos (ou alguns) Nodes executem uma cópia de um Pod. 
+À medida que os nós são adicionados ao cluster, os pods são adicionados a eles. 
+À medida que os nós são removidos do cluster, esses pods são coletados como lixo.
+A exclusão de um DaemonSet limpará os pods que ele criou.
+
+Alguns usos típicos de um DaemonSet são:
+
+executando um daemon de armazenamento de cluster em cada nó
+executando um daemon de coleta de logs em cada nó
+executando um daemon de monitoramento de nó em cada nó
+
+Em um caso simples, um DaemonSet, abrangendo todos os nós, 
+seria usado para cada tipo de daemon. Uma configuração mais 
+complexa pode usar vários DaemonSets para um único tipo de daemon,
+mas com diferentes sinalizadores e/ou diferentes solicitações de 
+memória e CPU para diferentes tipos de hardware.
+
+Criando um daemonset:
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: app-daemon
+  namespace: default
+  labels:
+    name: app-daemon
+spec:
+  selector:
+    matchLabels:
+      name: app-daemon
+  template:
+    metadata:
+      labels:
+        name: app-daemon
+    spec:
+      tolerations:
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+      containers:
+      - name: app-daemon
+        image: nginx
+
+Criando o daemonset:
+kubectl delete -f daemonset.yaml
+
+Visualizando os Daemonsets:
+kubectl get daemonset
+
+
