@@ -1,0 +1,74 @@
+Limits Range:
+
+Por padrão, os contêineres são executados com recursos de computação
+ilimitados em um cluster Kubernetes. Usando cotas de recursos do Kubernetes, 
+os administradores (também denominados operadores de cluster) podem restringir
+o consumo e a criação de recursos de cluster (como tempo de CPU, memória e armazenamento persistente) 
+em um namespace especificado. Dentro de um namespace, um pod pode consumir
+o máximo de CPU e memória permitido pelas ResourceQuotas que se aplicam a esse namespace. 
+Como um operador de cluster ou um administrador em nível de namespace, você 
+também pode se preocupar em garantir que um único objeto não possa monopolizar
+todos os recursos disponíveis em um namespace.
+
+Um LimitRange é uma política para restringir as alocações de recursos
+(limites e solicitações) que você pode especificar para cada tipo de 
+objeto aplicável (como Pod ou PersistentVolumeClaim) em um namespace.
+
+
+Criando um limitRange para CPU e aplicando a um POD em outro NameSpace:
+
+- Criando o namespace: kubectl create namespace test-limit 
+- Criando limit de CPU no namespace test-limit: kubectl create -f limit-cpu.yaml -n test-limit
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-min-max
+spec:
+  limits:
+  - max:
+      cpu: "800m"
+    min:
+      cpu: "200m"
+    type: Container
+
+Criando um limitRange para memoria e aplicando a um POD em outro NameSpace:
+- Criando limit Range de Memoria no namespace test-limit: kubectl create -f limit-mem.yaml -n test-limit
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: mem-min-max
+spec:
+  limits:
+  - max:
+      memory: 1Gi
+    min:
+      memory: 500Mi
+    type: Container
+
+
+- Listando os Limitranges: kubectl get limitrange -n test-limit
+
+- Adicionando um POD utlizando as politica criadas: kubectl create -f pod-limit-cpu-memory.yaml -n test-limit   
+apiVersion: v1
+kind: Pod
+metadata:
+  name: constraints-cpu-memory
+spec:
+  containers:
+  - name: constraints-cpu-memory
+    image: nginx
+    resources:
+      limits:
+        cpu: "600m"
+      requests:
+        cpu: "200m"
+    resources:
+      limits:
+        memory: "800Mi"
+      requests:
+        memory: "500Mi"
+
+
+kubectl describe pod constraints-cpu-memory -n test-limit
+
+
