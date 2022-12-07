@@ -11,3 +11,6 @@ spec:
     imagePullPolicy: IfNotPresent
   nodeSelector:
     disk: SSD
+  tolerations:
+  - key: "dedicated"
+    effect: "NoSchedule"    

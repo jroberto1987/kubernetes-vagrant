@@ -35,3 +35,69 @@ Com os parametros de tolerations e nodeSelector no arquivo acima, foi possivel e
 
 nodeSelector: 
     kubernetes.io/hostname: kmaster   
+
+
+---------------------------------------------------------------------------------------------------------------------
+
+Taint e Tolerations parte 2
+
+NoSchedule:	        Pods que não toleram esse taint não são programados no nó. Os pods atuais não são removidos do nó.
+PreferNoSchedule:	O Kubernetes evita a programação de pods que não toleram esse taint no nó.
+NoExecute:        	O pod é removido do nó caso já esteja em execução nele e não é programado no nó caso ainda não esteja em execução nele.
+
+
+Criando uma label para o node kworker1:
+kubectl label node kworker1 disk=SSD
+
+Listando a label no node kworker1:
+kubectl label node kworker1 --list
+
+Subindo o POD com o sesguinte conteudo: 
+kubectl create -f pod-selector.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    env: test
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
+  nodeSelector:
+    disk: SSD
+
+
+Aplicando a taints no Noschedule no node kworker1, dessa forma os containner que já estão rodando no node não serão afetados,
+porém são será possivél executar novos conteinners nesse node:
+kubectl taint node kworker1 dedicated:NoSchedule
+
+
+Para executar um pod nesse node temos que adicionar os parametros tolerations:
+
+kubectl create -f pod-selector-e-tolerations.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    env: test
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
+  nodeSelector:
+    disk: SSD
+  tolerations:
+  - key: "dedicated"
+    effect: "NoSchedule"
+
+------------------------------------------------------------------------------------------------------------
+
+Removendo a taint do node:
+kubectl taint node kworker1 dedicated-
+
+kubectl delete -f pod-selector-e-tolerations.yaml
