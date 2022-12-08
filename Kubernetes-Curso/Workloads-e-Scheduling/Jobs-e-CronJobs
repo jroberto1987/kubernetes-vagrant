@@ -1,0 +1,32 @@
+Jobs:
+Um Job cria um ou mais Pods e continuará a repetir a execução dos Pods até que um número especificado deles seja encerrado com sucesso.
+À medida que os pods são concluídos com êxito, o Trabalho rastreia as conclusões bem-sucedidas. Quando um número especificado de conclusões 
+bem-sucedidas é alcançado, a tarefa (ou seja, Trabalho) está concluída. A exclusão de um trabalho limpará os pods que ele criou. 
+A suspensão de um trabalho excluirá seus pods ativos até que o trabalho seja retomado novamente.
+
+Um caso simples é criar um objeto Job para executar um Pod de forma confiável até a conclusão. 
+O objeto Job iniciará um novo Pod se o primeiro Pod falhar ou for excluído 
+(por exemplo, devido a uma falha de hardware do nó ou reinicialização do nó).
+
+Você também pode usar um Job para executar vários Pods em paralelo.
+
+Se você deseja executar um trabalho (uma única tarefa ou várias em paralelo) em um agendamento, consulte CronJob.
+
+
+Testando o Job:
+kubectl create job my-job --image=busybox -- date
+kubectl get job : Listando o job
+kubectl get pod : Listando o Pod
+kubectl logs my-job-285mt : Verificando o log do POD, nele traz o resultado do job que nesse exemplo e data
+kubectl delete job my-job : Deleta o job criado
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+CronJob:
+Um CronJob cria trabalhos em uma programação de repetição. 
+Um objeto CronJob é como uma linha de um arquivo crontab (tabela cron).
+Ele executa uma tarefa periodicamente em um determinado cronograma, escrito no formato Cron.
+
+Testando o cronjob:
+kubectl create cronjob my-job --image=busybox --schedule="*/1 * * * *" -- date
+kubectl get cronjob : Listando o cronjob
+kubectl delete cronjob my-job : Deleta cronjob
