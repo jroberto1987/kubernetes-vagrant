@@ -1,0 +1,15 @@
+- Faça a criação de um Deployment com 3 replicas com a imagem do nginx:1.19.5.
+
+- Faça a atualização da imagem para a versão: nginx1.19.6
+
+-  Desfaça a atualização
+
+Criando um arquivo yaml para o deploy:
+kubectl create deployment my-deply --image=nginx:1.19.5 --port=80 --replicas=3 --dry-run=client -o yaml > execicio-my-deploy1.yaml
+
+
+criando o deploy:                  kubectl create deployment my-deply --image=nginx:1.19.5 --port=80 --replicas=3
+Verificando o History do deploy:   kubectl rollout history deployment my-deply
+Atualizando a versão da imagem:    kubectl set image deployment my-deply nginx=nginx:1.19.6
+Voltando para revisão 1:           kubectl rollout undo deployments --to-revision=1 
+
