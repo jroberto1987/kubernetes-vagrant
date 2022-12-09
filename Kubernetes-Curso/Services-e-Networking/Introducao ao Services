@@ -1,0 +1,29 @@
+Services:
+Uma maneira abstrata de expor um aplicativo em execução em um conjunto de pods como um serviço de rede. 
+Com o Kubernetes, você não precisa modificar seu aplicativo para usar um mecanismo de descoberta de 
+serviço desconhecido. O Kubernetes fornece aos pods seus próprios endereços IP e um único nome DNS
+para um conjunto de pods e pode fazer o balanceamento de carga entre eles.
+
+-----------------------------------------------------------------------------------------------------------------
+Expondo a primeira POD com NodePort
+kubectl run app-svc --image=nginx --port=80 --dry-run=client -o yaml > pod.yaml
+kubectl create -f pod.yaml
+
+Criando um service dessa forma é criado o TYPE ClusterIP que só é acessado de dentro do Cluster
+kubectl expose pod app-svc --port=80
+
+Listando os services criados:
+kubectl get services
+
+Na hora que é criado um service ele vinculado a um label da POD e também criado um enpoints:
+kubectl get endpoints
+
+Editando o services e mudando o TYPE de ClusterIP para NodePort:
+kubectl edit services app-svc
+type: ClusterIP para type: NodePort
+
+-------------------------------------------------------------------------------------------------------
+
+
+
+

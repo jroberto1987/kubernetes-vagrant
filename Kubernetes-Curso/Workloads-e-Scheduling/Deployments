@@ -20,4 +20,7 @@ Escalando a quantidade de containner de duas formas:
 Deletando um deploy:
 kubectl delete deploy app-deploy
 
+Verificando a configuração do deploy:
+kubectl describe deploy app-deploy
+
 
