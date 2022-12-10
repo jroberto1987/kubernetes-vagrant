@@ -1,0 +1,37 @@
+Ingress:
+Um objeto de API que gerencia o acesso externo aos serviços em um cluster, geralmente HTTP. 
+O Ingress pode fornecer balanceamento de carga, terminação SSL e hospedagem virtual baseada em nome.
+O Ingress expõe rotas HTTP e HTTPS de fora do cluster para serviços dentro do cluster. 
+O roteamento de tráfego é controlado por regras definidas no recurso Ingress.
+
+Instalando o ingress controller no Bare-metal
+https://kubernetes.github.io/ingress-nginx/deploy/#bare-metal-clusters
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.5.1/deploy/static/provider/baremetal/deploy.yaml
+
+kubectl get deploy -n ingress-nginx
+kubectl get pod -n ingress-nginx
+kubectl get service -n ingress-nginx
+
+Acessando a pagina do nginx para testar se o proxy está funcionando, por enquando a pagina vai dar erro 404, devido ainda não ter sido criado um objeto ingress:
+Essa porta foi pega com o comando: kubectl get service -n ingress-nginx  
+ingress-nginx-controller             NodePort    10.103.46.156    <none>        80:30240/TCP,443:30305/TCP   7m11s
+http://172.16.16.100:30240/
+
+Criando um deploy para ser adicionado a um objeto ingress:
+kubectl create deploy deploy-app --image=nginx --port=80 --replicas=3 
+kubectl expose deploy deploy-app --port=80 --target-port=80 --type=LoadBalancer
+
+Entrando no primeiro pod e editando a pagina para testar:
+kubectl get pods -o wide
+kubectl exec -it deploy-app-7cdc7b67bc-58ksn -- bash
+apt update
+apt install vim
+cd /usr/share/nginx/html
+
+Esdudar mais o ingress controller.
+
+
+
+
+
+
