@@ -1,0 +1,8 @@
+Configurando um deploy e expondo o mesmo:
+kubectl create deploy deploy-svc --image=nginx --port=80 --replicas=3
+
+Expondo o deploy com o service do tipo LoadBalancer, porém o EXTERNAL-IP ficará como pending, devido não temos um serviço de LoadBalancer configurado 
+kubectl expose deploy deploy-svc --port=80 --target-port=80 --type=LoadBalancer
+
+Visualizando os endpoints criado após o deployments:
+kubectl get endpoints

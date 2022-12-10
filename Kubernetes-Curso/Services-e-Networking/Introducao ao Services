@@ -9,13 +9,13 @@ Expondo a primeira POD com NodePort
 kubectl run app-svc --image=nginx --port=80 --dry-run=client -o yaml > pod.yaml
 kubectl create -f pod.yaml
 
-Criando um service dessa forma é criado o TYPE ClusterIP que só é acessado de dentro do Cluster
+Criando um service, dessa forma é criado o TYPE ClusterIP por default que é acessado somente de dentro do Cluster
 kubectl expose pod app-svc --port=80
 
 Listando os services criados:
 kubectl get services
 
-Na hora que é criado um service ele vinculado a um label da POD e também criado um enpoints:
+Na hora que é criado um service ele e vinculado a um label da POD e também criado um enpoints:
 kubectl get endpoints
 
 Editando o services e mudando o TYPE de ClusterIP para NodePort:
@@ -23,7 +23,8 @@ kubectl edit services app-svc
 type: ClusterIP para type: NodePort
 
 -------------------------------------------------------------------------------------------------------
+Deletando a POD app-svc:
+kubectl delete pod app-svc
 
-
-
-
+Deletetando o service:
+kubectl delete service app-svc
