@@ -1,0 +1,15 @@
+StatefulSets:
+StatefulSet é o objeto de API de carga de trabalho usado para gerenciar aplicativos com estado. 
+Gerencia a deployment e o dimensionamento de um conjunto de pods e oferece garantias sobre a 
+ordem e a exclusividade desses pods. Como um deployment, um StatefulSet gerencia pods 
+baseados em uma especificação de contêiner idêntica. Ao contrário de um deployment, um 
+StatefulSet mantém uma identidade fixa para cada um de seus pods. Esses pods são criados a 
+partir da mesma especificação, mas não são intercambiáveis: cada um tem um identificador 
+persistente que mantém em qualquer reagendamento. Se você deseja usar volumes de armazenamento
+para fornecer persistência para sua carga de trabalho, pode usar um StatefulSet como parte da solução. 
+Embora os pods individuais em um StatefulSet sejam suscetíveis a falhas, os identificadores de pods 
+persistentes facilitam a correspondência de volumes existentes com os novos pods que substituem
+qualquer um que tenha falhado.
+
+
+
