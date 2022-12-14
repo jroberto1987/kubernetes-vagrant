@@ -1,0 +1,6 @@
+StorageClass:
+Um StorageClass fornece uma maneira para os administradores descreverem as "classes" de armazenamento que oferecem. 
+Classes diferentes podem ser mapeadas para níveis de qualidade de serviço, para políticas de backup ou para políticas 
+arbitrárias determinadas pelos administradores do cluster. O próprio Kubernetes não tem opinião sobre o que as classes 
+representam. Esse conceito às vezes é chamado de "perfis" em outros sistemas de armazenamento.
+
