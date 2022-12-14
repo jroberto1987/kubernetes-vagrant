@@ -1,0 +1,13 @@
+- Crie um deployment com 3 replicas da imagem do nginx
+
+- Faça a exposição do deployment para o tipo NodePort
+
+1 - kubectl create deploy deployment-nodeport-exercicio --image=nginx --port=80 --replicas=3 --dry-run=client -o yaml > deployment-nodeport-exercicio.yaml
+2 - kubectl create -f deployment-nodeport-exercicio.yaml
+3 - kubectl expose deploy deployment-nodeport-exercicio --port=80 --target-port=80 --type=NodePort
+4 - kubectl get service
+NAME                            TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+deployment-nodeport-exercicio   NodePort    10.111.50.53   <none>        80:32390/TCP   3m17s
+kubernetes                      ClusterIP   10.96.0.1      <none>        443/TCP        45h
+5 - Acessando via navegador nos ips dos nodes: http://172.16.16.100:32366/ 
+
