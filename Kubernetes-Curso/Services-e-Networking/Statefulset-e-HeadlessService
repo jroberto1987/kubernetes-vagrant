@@ -11,5 +11,76 @@ Embora os pods individuais em um StatefulSet sejam suscetíveis a falhas, os ide
 persistentes facilitam a correspondência de volumes existentes com os novos pods que substituem
 qualquer um que tenha falhado.
 
+StatefulSets são valiosos para aplicativos que exigem um ou mais dos itens a seguir:
+Identificadores de rede estáveis e exclusivos. 
+Armazenamento estável e persistente. 
+Implantação e dimensionamento ordenados e elegantes. 
+Atualizações contínuas ordenadas e automatizadas.
 
+Exemplo statefulset:
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  ports:
+  - port: 80
+    name: web
+  clusterIP: None
+  selector:
+    app: nginx
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: web
+spec:
+  selector:
+    matchLabels:
+      app: nginx # has to match .spec.template.metadata.labels
+  serviceName: "nginx"
+  replicas: 3 # by default is 1
+  minReadySeconds: 10 # by default is 0
+  template:
+    metadata:
+      labels:
+        app: nginx # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: nginx
+        image: registry.k8s.io/nginx-slim:0.8
+        ports:
+        - containerPort: 80
+          name: web
+
+kubectl create -f statefulset.yaml 
+kubectl scale statefulset web --replicas=10
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Headless Service
+Às vezes, você não precisa de balanceamento de carga e um único IP de serviço. 
+Nesse caso, você pode criar o que chamamos de Serviços "headless", especificando
+explicitamente "None" para o IP do cluster (.spec.clusterIP).
+
+Você pode usar um serviço headless para interagir com outros mecanismos de 
+descoberta de serviço, sem estar vinculado à implementação do Kubernetes.
+
+Para serviços headless, um IP de cluster não é alocado, o kube-proxy não 
+lida com esses serviços e não há balanceamento de carga ou proxy feito pela 
+plataforma para eles. Como o DNS é configurado automaticamente depende se o
+serviço tem seletores definidos:
+
+Com selector
+Para serviços headless que definem seletores, o plano de controle do Kubernetes
+cria objetos EndpointSlice na API do Kubernetes e modifica a configuração do DNS
+para retornar registros A ou AAAA (endereços IPv4 ou IPv6) que apontam diretamente 
+para os pods que suportam o serviço.
+
+Sem selector
+Para serviços headless que não definem seletores, o plano de controle não cria 
+objetos EndpointSlice. No entanto, o sistema DNS procura e configura:
 
