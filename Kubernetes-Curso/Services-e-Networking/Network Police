@@ -1,4 +1,21 @@
 
+Network Policy:
+Se você deseja controlar o fluxo de tráfego no endereço IP ou no nível da porta (camada OSI 3 ou 4), considere usar o Kubernetes
+ NetworkPolicies para aplicativos específicos em seu cluster. NetworkPolicies são uma construção centrada no aplicativo que permite
+especificar como um pod pode se comunicar com várias "entidades" de rede (usamos a palavra "entidade" aqui para evitar sobrecarregar
+os termos mais comuns, como "endpoints" e "serviços" , que têm conotações específicas do Kubernetes) na rede. NetworkPolicies se
+aplicam a uma conexão com um pod em uma ou ambas as extremidades e não são relevantes para outras conexões.
+
+As entidades com as quais um Pod pode se comunicar são identificadas por meio de uma combinação dos 3 identificadores a seguir:
+
+Outros pods permitidos (exceção: um pod não pode bloquear o acesso a si mesmo)
+Namespaces permitidos
+Bloqueios de IP (exceção: o tráfego de e para o nó onde um Pod está sendo executado é sempre permitido, independentemente do endereço IP do Pod ou do nó)
+Ao definir uma NetworkPolicy baseada em pod ou namespace, você usa um seletor para especificar qual tráfego é permitido de e para os pods que correspondem 
+ao seletor.
+
+Enquanto isso, quando NetworkPolicies baseadas em IP são criadas, definimos políticas baseadas em blocos de IP (intervalos CIDR).
+
 Testando laboratorio de conexão:
 kubectl run app1 --image=nginx --port=80
 kubectl run app2 --image=nginx --port=80
@@ -12,7 +29,7 @@ app2   1/1     Running   0          33m   192.168.41.147   kworker1   <none>    
 
 Conectando do app1 ao app2 conexão realizada com sucesso:
 kubectl exec -i -it app1 -- curl 192.168.41.147
-
+kubectl create -f network-policy.yaml
 Criando uma network policy:
 vim network-policy.yaml
 apiVersion: networking.k8s.io/v1
@@ -56,3 +73,54 @@ Adicionando a label do network police ao namespace, assim a conexão será liber
 kubectl label namespace application project=myproject
 kubectl exec -i -it -n application app3 -- curl  192.168.41.147
 
+Criando um deployment já adicionando o as role de networkpolicy:
+kubectl create -f deploy-network-policy.yaml
+vim deploy-network-policy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: app
+  name: app
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+      role: frontend
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: app
+        role: frontend
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        ports:
+        - containerPort: 80
+        resources: {}
+status: {}
+
+
+Realizando o teste de conexão do deploy aos pods app1 e app2, essa conexão funciona devido o deploy conter as label do networkpolicy:
+kubectl get pod -o wide
+NAME                   READY   STATUS    RESTARTS   AGE   IP               NODE       NOMINATED NODE   READINESS GATES
+app-68c56dcdf5-zbxt2   1/1     Running   0          96s   192.168.77.131   kworker2   <none>           <none>
+app1                   1/1     Running   0          40m   192.168.77.129   kworker2   <none>           <none>
+app2                   1/1     Running   0          40m   192.168.77.130   kworker2   <none>           <none>
+
+kubectl exec -it app-68c56dcdf5-zbxt2 -- curl 192.168.77.129
+kubectl exec -it app-68c56dcdf5-zbxt2 -- curl 192.168.77.130
+
+Removendo o ambiente criando acima:
+kubectl delete pod app1
+kubectl delete pod app2
+kubectl delete pod app3 -n application
+kubectl delete networkpolicy allow-label-select
+kubectl delete -f deploy-network-policy.yaml
+kubectl delete ns applicatio
