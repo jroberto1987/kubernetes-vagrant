@@ -1,0 +1,58 @@
+
+Testando laboratorio de conexão:
+kubectl run app1 --image=nginx --port=80
+kubectl run app2 --image=nginx --port=80
+
+
+Listando as PODS:
+kubectl get pods -o wide
+NAME   READY   STATUS    RESTARTS   AGE   IP               NODE       NOMINATED NODE   READINESS GATES
+app1   1/1     Running   0          33m   192.168.77.140   kworker2   <none>           <none>
+app2   1/1     Running   0          33m   192.168.41.147   kworker1   <none>           <none>
+
+Conectando do app1 ao app2 conexão realizada com sucesso:
+kubectl exec -i -it app1 -- curl 192.168.41.147
+
+Criando uma network policy:
+vim network-policy.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-label-select
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      role: db
+  policyTypes:
+  - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              project: myproject
+        - podSelector:
+            matchLabels:
+              role: frontend
+
+
+Listando a networkpolicy:
+kubectl get networkpolicy
+
+Aplicando o label no pod app2, dessa forma podemos observar que não é mais possivel se conectar ao pod app2:
+kubectl label pod app2 role=db
+kubectl exec -i -it app1 -- curl 192.168.41.147
+Obs: Testando do app2 para o app1 vai funcionar, devidor a police não esta aplicada ao app1:
+kubectl exec -i -it app2 -- curl 192.168.77.140
+
+Testando a conexão da network police apartir de outro namespace:
+Testando no pod app1 onde a network police não esta aplicada funciona normalmente de outra namespace, no pod2 da app2 não funciona devido a police:
+kubectl create namespace application
+kubectl run app3 --image=nginx --port=80 -n application
+kubectl exec -i -it -n application app3 -- curl 192.168.77.140
+kubectl exec -i -it -n application app3 -- curl  192.168.41.147
+
+Adicionando a label do network police ao namespace, assim a conexão será liberada ao app2:
+kubectl label namespace application project=myproject
+kubectl exec -i -it -n application app3 -- curl  192.168.41.147
+
