@@ -1,0 +1,110 @@
+Introdução:
+Introdução O gerenciamento de armazenamento é um problema diferente do gerenciamento de instâncias de computação. 
+O subsistema PersistentVolume fornece uma API para usuários e administradores que abstrai detalhes de como o 
+armazenamento é fornecido de como ele é consumido. Para fazer isso, apresentamos dois novos recursos de API: 
+PersistentVolume e PersistentVolumeClaim. 
+
+Um PersistentVolume (PV) é uma parte do armazenamento no cluster 
+que foi provisionado por um administrador ou provisionado dinamicamente usando classes de armazenamento. 
+É um recurso no cluster, assim como um nó é um recurso de cluster. PVs são plug-ins de volume como Volumes, 
+mas têm um ciclo de vida independente de qualquer Pod individual que usa o PV. Esse objeto API captura os 
+detalhes da implementação do armazenamento, seja NFS, iSCSI ou um sistema de armazenamento específico do 
+provedor de nuvem. 
+
+Um PersistentVolumeClaim (PVC) é uma solicitação de armazenamento por um usuário. 
+É semelhante a um pod. Os pods consomem recursos de nó e os PVCs consomem recursos de PV. Os pods podem 
+solicitar níveis específicos de recursos (CPU e memória). As declarações podem solicitar tamanhos e modos 
+de acesso específicos (por exemplo, eles podem ser montados como ReadWriteOnce, ReadOnlyMany ou ReadWriteMany, 
+consulte AccessModes). 
+
+Embora os PersistentVolumeClaims permitam que um usuário consuma recursos de armazenamento
+abstratos, é comum que os usuários precisem de PersistentVolumes com propriedades variadas, como desempenho, 
+para problemas diferentes. Os administradores de cluster precisam ser capazes de oferecer uma variedade de 
+PersistentVolumes que diferem em mais maneiras do que tamanho e modos de acesso, sem expor os usuários aos detalhes 
+de como esses volumes são implementados. Para essas necessidades, existe o recurso StorageClass.
+
+Fonte:https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+Laboratorio:
+
+Criando o PersistentVolume (PV):
+vim pv-hostpath.yaml
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+
+kubectl create -f pv-hostpath.yaml
+kubectl get persistentvolume
+kubectl describe persistentvolume
+
+
+Criando o PersistentVolumeClaim (PVC):
+vim pvc-hostpath.yaml
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+kubectl create -f pvc-hostpath.yaml
+kubectl get persistentvolumeclaim
+kubectl describe persistentvolumeclaim
+
+Criando o POD para usar o pvc:
+vim pod-hostpath.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: task-pv-pod
+spec:
+  volumes:
+    - name: pv-storage
+      persistentVolumeClaim:
+        claimName: pv-claim
+  containers:
+    - name: pv-container
+      image: nginx
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: pv-storage
+
+kubectl create -f pod-hostpath.yaml
+
+O pod foi criado no kworker2 e PVs foi criado nele:
+kubectl get pod -o wide
+NAME          READY   STATUS    RESTARTS   AGE    IP               NODE       NOMINATED NODE   READINESS GATES
+task-pv-pod   1/1     Running   0          117s   192.168.77.137   kworker2   <none>           <none>
+
+Mostra informações 
+kubectl describe pod task-pv-pod
+
+Deletando o ambiente:
+kubectl delete pod task-pv-pod
+kubectl delete pvc pv-claim
+kubectl delete pv pv-volume
+
+OBS: O dados do volume continuam no kworker2
