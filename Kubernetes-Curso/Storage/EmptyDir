@@ -1,0 +1,19 @@
+emptyDir:
+Um volume emptyDir é criado pela primeira vez quando um pod é atribuído a um nó e existe enquanto esse 
+pod estiver em execução nesse nó. Como o nome diz, o volume emptyDir está inicialmente vazio. Todos os 
+contêineres no pod podem ler e gravar os mesmos arquivos no volume emptyDir, embora esse volume possa 
+ser montado no mesmo caminho ou em caminhos diferentes em cada contêiner. Quando um Pod é removido de 
+um nó por qualquer motivo, os dados no emptyDir são excluídos permanentemente.
+
+Observação: a falha de um contêiner não remove um pod de um nó. Os dados em um volume emptyDir são seguros em falhas de contêiner.
+
+kubectl describe pod pod-empty
+
+Entrando no container e visualizando o volume montando:
+kubectl exec -it pod-empty -- bash
+
+No no node é possivel visualizar o volume:
+cd /var/lib/kubelet/pods/
+find . -name "cache-volume"
+
+
