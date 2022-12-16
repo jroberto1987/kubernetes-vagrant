@@ -1,0 +1,75 @@
+NFS:
+Um volume nfs permite que um compartilhamento NFS (Network File System) existente seja montado em um pod. 
+Ao contrário de emptyDir, que é apagado quando um Pod é removido, o conteúdo de um volume nfs é preservado 
+e o volume é meramente desmontado. Isso significa que um volume NFS pode ser pré-preenchido com dados e 
+esses dados podem ser compartilhados entre pods. O NFS pode ser montado por vários gravadores simultaneamente.
+
+
+Laboratorio, para fucionar e um ambiente on-premise é necessario configurar o servidor nfs e instalar o client do nfs em todos os nodes workers
+ 
+Criando PersistentVolume:
+nfs-pv.yaml
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 172.31.31.88
+    path: "/opt/k8s"
+
+Criando PersistentVolumeClaim:
+nfs-pvc.yaml
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 800Mi
+
+
+Criando o deployment usando o PersitentVolumeClaim:
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: app-nfs
+  name: app-nfs
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-nfs
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: app-nfs
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        ports:
+        - containerPort: 80
+        resources: {}
+        volumeMounts:
+        - name: nginx
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: nginx
+        persistentVolumeClaim:
+          claimName: nfs    
+status: {}
