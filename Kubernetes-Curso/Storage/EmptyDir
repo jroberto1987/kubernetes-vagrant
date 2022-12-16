@@ -7,6 +7,21 @@ um nó por qualquer motivo, os dados no emptyDir são excluídos permanentemente
 
 Observação: a falha de um contêiner não remove um pod de um nó. Os dados em um volume emptyDir são seguros em falhas de contêiner.
 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-empty
+spec:
+  containers:
+  - image: nginx
+    name: test-container
+    volumeMounts:
+    - mountPath: /cache
+      name: cache-volume
+  volumes:
+  - name: cache-volume
+    emptyDir: {}
+
 kubectl describe pod pod-empty
 
 Entrando no container e visualizando o volume montando:

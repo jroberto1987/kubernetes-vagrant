@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-app
+spec:
+  containers:
+  - image: nginx
+    name: nginx1
+    volumeMounts:
+     - mountPath: /mnt/html
+       name: mnt-volume 
+  
+  - image: nginx
+    name: nginx2
+    volumeMounts:
+     - mountPath: /mnt/html
+       name: mnt-volume      
+  volumes:
+   - name: mnt-volume
+     emptyDir:
+      sizeLimit: 500Mi
+
+
