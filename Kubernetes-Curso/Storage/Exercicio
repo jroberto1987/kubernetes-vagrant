@@ -1,0 +1,5 @@
+Exercicío
+- Com um volume EmptyDir, crie um POD com 2 containers e veja o faça o mapeamento do volumes para ambos containers.
+
+- Veja se em ambos containers é possivel realizar leitura e escrita de dados.
+

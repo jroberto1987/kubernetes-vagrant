@@ -3,21 +3,21 @@ kind: Pod
 metadata:
   name: my-app
 spec:
+       
+  volumes:
+  - name: shared-volume
+    emptyDir: {}
+
   containers:
   - image: nginx
     name: nginx1
     volumeMounts:
-     - mountPath: /mnt/html
-       name: mnt-volume 
-  
+    - mountPath: /mountpoint-1
+      name: shared-volume 
+ 
   - image: nginx
     name: nginx2
     volumeMounts:
-     - mountPath: /mnt/html
-       name: mnt-volume      
-  volumes:
-   - name: mnt-volume
-     emptyDir:
-      sizeLimit: 500Mi
-
+    - mountPath: /mountpoint-2
+      name: shared-volume
 
